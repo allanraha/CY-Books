@@ -8,36 +8,58 @@ public class Library {
     public Library()
     {
     	// bdds et api
+    	// faire les books, users et historique associées
     }
     
     
     public void registration(User user)
     {
-    	users.put(user.getId(), user);
+    	this.users.put(user.getId(), user);
     }
     
-    public void editUserInfo()
+    public void editUserInfo(int id, String name, int maxBorrow, History history, Book ...books)
     {
-    	
+    	// users.get(id) = new User(les attributs);
     }
     
-    public User searchUser()
+    public User searchUser(int id)
     {
-    	User result = null;
-        
-        return result;
+        return this.users.get(id);
     }
     
     public List<Book> searchBooks(String keyWord, String ...keyWords)
     {
     	List<Book> results = new ArrayList<>();
-        
-        return results;
+    	
+    	for (Book book : this.books.values()) // for each book
+    	{
+    		if(book.containsWord(keyWord)) // if the book contains the keyWord parameter
+    		{
+    			results.add(book);	// add it to the list of results
+    		}
+    		else // verify if the book contains one of the other keywords so
+    		{
+    			for(String word : keyWords) // for each other keyword
+    			{
+    				if(book.containsWord(word)) // if the book contains it
+    	    			results.add(book); // add it to the list 
+    			}
+	    	}
+    	}
+        return results; // return the list
     }
     
-    public void borrow(User user, Book book)
+    public void borrow(User user, Book book) // throws exception
     {
-    	// setBorrow et user.borrow
+    	if(user.getBooks().size() < user.getMaxBorrow())
+    	{
+    		user.borrow(book);
+        	book.setBorrower(user);
+    	}
+    	else
+    	{
+    		// throw exception
+    	}
     }
     
 }
