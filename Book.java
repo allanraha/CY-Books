@@ -5,7 +5,7 @@ public class Book {
 	private String title;
 	private String author;
 	private String genre;
-	private int maxTime;
+	private int maxTime; //days
 	private List<Date> borrowDates;
 	private int borrowNumber;
 	private User borrower;
@@ -77,10 +77,20 @@ public class Book {
 		this.borrower = user;
 	}
 	
-	public boolean isLate() 
-	{
-		// maxTime unité de temps ?
-		
-		return true;
+	public boolean isLate() {
+		// Check if the borrow dates list is null or empty
+		if (this.borrowDates == null || this.borrowDates.isEmpty()) {
+			return false;  // If so, the book is not late
+		}
+
+		// Retrieve the most recent borrow date
+		Date lastBorrowDate = this.borrowDates.get(this.borrowDates.size() - 1);
+
+		// Calculate the deadline by adding maxTime days to the borrow date
+		long deadlineInMillis = lastBorrowDate.getTime() + (long) this.maxTime * 24 * 60 * 60 * 1000;
+		Date deadline = new Date(deadlineInMillis);
+
+		// Compare the deadline with the current date
+		return new Date().after(deadline);
 	}
 }
