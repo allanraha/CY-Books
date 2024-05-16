@@ -55,6 +55,6 @@ public class User {
     public void borrow(Book book)
     {
     	this.books.add(book);
-    	this.history.add(book, new Date(), 0); // 0 because the book can't be late if it has just been borrowed
+    	this.history.add(book, new Date(), 0, 0); // 0 because the book can't be late if it has just been borrowed
     }
 }
