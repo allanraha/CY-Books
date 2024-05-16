@@ -49,12 +49,56 @@ public class Library {
         return results; // return the list
     }
     
+    public List<Book> mostBorrowed()
+    {
+    	List<Book> results = new ArrayList<Book>();
+    	/*			faut prendre en comptes la quantité de chaque livres
+    	int i = 0;
+    	Book book;
+    			
+    	
+    	do{
+    		book = null;
+    		
+    		for(int j = 0; j < this.books.size(); j++) // for each book of the library
+    		{
+    			if(!results.contains(this.books.get(i))) // if it is not already in the results list
+    			{
+    				if(book == null || this.books.get(i).getBorrowNumber() > book.getBorrowNumber())
+    				{
+    					book = this.books.get(i)
+    				}
+    			}
+    		}
+    		
+    		if(book != null)
+    		{
+    			results.add(book);
+    		}
+    		
+    	}while(i < 30 && book != null);*/
+    	
+    	return results;
+    }
+    
     public void borrow(User user, Book book) // throws exception
     {
-    	if(user.getBooks().size() < user.getMaxBorrow())
+    	List<ExemplaryBook> exemplaries = book.getExemplaries();
+    	ExemplaryBook exemplary = null;
+    	int i = 0;
+    	int size = exemplaries.size();
+    	
+    	while(exemplary == null && i < size) // we search an exemplary of the book which is not borrowed
+    	{
+    		if(exemplaries.get(i).getBorrower() == null)
+    			exemplary = exemplaries.get(i);
+    		i++;
+    	}
+    	
+    	if(exemplary != null && user.getBooks().size() < user.getMaxBorrow())
     	{
     		user.borrow(book);
-        	book.setBorrower(user);
+        	exemplary.setBorrower(user);
     	}
     	else
     	{
