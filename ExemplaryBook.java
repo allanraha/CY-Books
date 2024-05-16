@@ -44,20 +44,20 @@ public class ExemplaryBook
 		this.borrower = user;
 	}
 	
-	public int howLate() 
-	{
-		// on part du principe que maxTime est en jour
-		int last = this.borrowDates.size() - 1;
-		int days = (int) (this.borrowDates.get(last).getTime() / 86400000); 
-		int maxDays = days + this.maxTime;
-		Date d1 = new Date();
-		int currentDays = (int) (d1.getTime() / 86400000);
-		
-		if(maxDays < currentDays)
-		{
-			return currentDays - maxDays;
+	public boolean isLate() {
+		// Check if the borrow dates list is null or empty
+		if (this.borrowDates == null || this.borrowDates.isEmpty()) {
+			return false;  // If so, the book is not late
 		}
-		
-		return 0;
+
+		// Retrieve the most recent borrow date
+		Date lastBorrowDate = this.borrowDates.get(this.borrowDates.size() - 1);
+
+		// Calculate the deadline by adding maxTime days to the borrow date
+		long deadlineInMillis = lastBorrowDate.getTime() + (long) this.maxTime * 24 * 60 * 60 * 1000;
+		Date deadline = new Date(deadlineInMillis);
+
+		// Compare the deadline with the current date
+		return new Date().after(deadline);
 	}
 }
