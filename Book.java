@@ -1,31 +1,24 @@
 import java.util.*;
 
 public class Book {
+	private List<ExemplaryBook> exemplaries;
+	private int quantity;
 	private int isbn;
 	private String title;
 	private String author;
 	private String genre;
-	private int maxTime; //days
-	private List<Date> borrowDates;
-	private int borrowNumber;
-	private User borrower;
 	
-	public Book(int isbn, String title, String author, String genre, int maxTime, List<Date> borrowDates, User borrower) 
+	public Book(int isbn, String title, String author, String genre)
 	{
 		this.isbn = isbn;
 		this.title = title;
 		this.author = author;
 		this.genre = genre;
-		this.maxTime = maxTime;
-		this.borrowDates = borrowDates;
 		
-		if(borrowDates != null)
-			this.borrowNumber = borrowDates.size();
-		else
-			this.borrowNumber = 0;
 		
-		this.borrower = borrower;
-    }
+		////// EUH LA QUANTITE ET LES TRCS JE FAIS CMNT???????????
+		
+	}
 	
 	public int getIsbn()
 	{
@@ -43,54 +36,30 @@ public class Book {
 	{
 		return this.genre;
 	}
-	public int getMaxTime()
+	public int getQuantity()
 	{
-		return this.maxTime;
+		return this.quantity;
 	}
-	public List<Date> getBorrowDates()
+	public List<ExemplaryBook> getExemplaries()
 	{
-		return this.borrowDates;
-	}
-	public int getBorrowNumber()
-	{
-		return this.borrowNumber;
+		return this.exemplaries;
 	}
 	
 	public boolean containsWord(String word)
 	{
+			//////// API BNF A COMPARER AUSSI !!!!!!!!!!!!!!!!
+		
 		// toLowerCase is used so 'A' match with 'a' (contains is case sensitive)
 		word = word.toLowerCase();
 		
-		// we verify if the word is in either the title, the genre, the author's name or the borrower's name (if there is a borrower) 
-		if(this.title.toLowerCase().contains(word) || this.author.toLowerCase().contains(word) ||
-		this.genre.toLowerCase().contains(word) || 
-		(this.borrower != null && this.borrower.getName().toLowerCase().contains(word)))
+		// we verify if the word is contained in either
+		if(this.title.toLowerCase().contains(word) || this.author.toLowerCase().contains(word) || // the title or the genre
+		this.genre.toLowerCase().contains(word) || // the author's name
+		String.valueOf(this.isbn).toLowerCase().contains(word)) // the ISBN
 		{
 			return true;
 		}
 		
 		return false;
-	}
-	
-	public void setBorrower(User user)
-	{
-		this.borrower = user;
-	}
-	
-	public boolean isLate() {
-		// Check if the borrow dates list is null or empty
-		if (this.borrowDates == null || this.borrowDates.isEmpty()) {
-			return false;  // If so, the book is not late
-		}
-
-		// Retrieve the most recent borrow date
-		Date lastBorrowDate = this.borrowDates.get(this.borrowDates.size() - 1);
-
-		// Calculate the deadline by adding maxTime days to the borrow date
-		long deadlineInMillis = lastBorrowDate.getTime() + (long) this.maxTime * 24 * 60 * 60 * 1000;
-		Date deadline = new Date(deadlineInMillis);
-
-		// Compare the deadline with the current date
-		return new Date().after(deadline);
 	}
 }
