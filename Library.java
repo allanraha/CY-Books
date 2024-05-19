@@ -7,19 +7,21 @@ public class Library {
     
     public Library()
     {
-    	// bdds et api
+    	///// bdd a faire
     	// faire les books, users et historique associées
     }
     
     
     public void registration(User user)
     {
+    	///// bdd a faire
     	this.users.put(user.getId(), user);
     }
     
-    public void editUserInfo(int id, String name, int maxBorrow, History history, Book ...books)
+    public void editUserInfo(int id, String name, int maxBorrow, History history, List<Book> books)
     {
-    	// users.get(id) = new User(les attributs);
+    	///// bdd a faire
+    	this.users.put(id, new User(id, name, maxBorrow, history, books));
     }
     
     public User searchUser(int id)
@@ -27,6 +29,7 @@ public class Library {
         return this.users.get(id);
     }
     
+    //
     public List<Book> searchBooks(String keyWord, String ...keyWords)
     {
     	List<Book> results = new ArrayList<Book>();
@@ -52,7 +55,7 @@ public class Library {
     public List<Book> mostBorrowed()
     {
     	List<Book> results = new ArrayList<Book>();
-    	/*			faut prendre en comptes la quantité de chaque livres
+    	
     	int i = 0;
     	Book book;
     			
@@ -62,11 +65,11 @@ public class Library {
     		
     		for(int j = 0; j < this.books.size(); j++) // for each book of the library
     		{
-    			if(!results.contains(this.books.get(i))) // if it is not already in the results list
+    			if(!results.contains(this.books.get(j))) // if it is not already in the results list
     			{
-    				if(book == null || this.books.get(i).getBorrowNumber() > book.getBorrowNumber())
+    				if(book == null || this.books.get(j).getAllBorrow30Days() > book.getAllBorrow30Days())
     				{
-    					book = this.books.get(i)
+    					book = this.books.get(j);
     				}
     			}
     		}
@@ -75,14 +78,17 @@ public class Library {
     		{
     			results.add(book);
     		}
+    		i++;
     		
-    	}while(i < 30 && book != null);*/
+    	}while(i < 30 && book != null);
     	
     	return results;
     }
     
     public void borrow(User user, Book book) // throws exception
     {
+    	///// bdd a faire
+    	
     	List<ExemplaryBook> exemplaries = book.getExemplaries();
     	ExemplaryBook exemplary = null;
     	int i = 0;
