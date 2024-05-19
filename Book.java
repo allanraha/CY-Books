@@ -1,4 +1,6 @@
 import java.util.*;
+import java.io.*;
+import java.net.*;
 
 public class Book {
 	private List<ExemplaryBook> exemplaries;
@@ -8,16 +10,15 @@ public class Book {
 	private String author;
 	private String genre;
 	
-	public Book(int isbn, String title, String author, String genre)
+	public Book(int isbn, String title, String author, String genre, List<ExemplaryBook> exemplaries)
 	{
 		this.isbn = isbn;
 		this.title = title;
 		this.author = author;
 		this.genre = genre;
 		
-		
-		////// EUH LA QUANTITE ET LES TRCS JE FAIS CMNT???????????
-		
+		this.exemplaries = exemplaries;
+		this.quantity = exemplaries.size();
 	}
 	
 	public int getIsbn()
@@ -45,9 +46,42 @@ public class Book {
 		return this.exemplaries;
 	}
 	
+	public int getAllBorrow30Days()
+	{
+		int sum = 0;
+		ExemplaryBook exemplary;
+		Date date = new Date();
+		long milli = date.getTime();
+		
+		for(int i = 0; i < this.quantity; i++)
+		{
+			exemplary = this.exemplaries.get(i);
+			for(int j = 0; j < exemplary.getBorrowDates().size(); j++)
+			{
+				if((milli - exemplary.getBorrowDates().get(j).getTime()) / 86400000 < 30)
+					sum++;
+			}
+			
+		}
+		return sum;
+	}
+	
 	public boolean containsWord(String word)
 	{
-			//////// API BNF A COMPARER AUSSI !!!!!!!!!!!!!!!!
+		//////// API 
+		/*
+		String apiUrl = "http://catalogue.bnf.fr/api/SRU";
+        String queryString = String.format("bib.anywhere %s \"%s\"",
+                relation,
+                URLEncoder.encode(query, "UTF-8"));
+        String urlString = apiUrl + "?version=1.2&operation=searchRetrieve&query=" + URLEncoder.encode(queryString, "UTF-8");
+
+        // Faire la requête HTTP
+        URL url = new URL(urlString);
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setRequestMethod("GET");
+        
+		 */
 		
 		// toLowerCase is used so 'A' match with 'a' (contains is case sensitive)
 		word = word.toLowerCase();
