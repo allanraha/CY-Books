@@ -5,17 +5,7 @@ public class User {
 	private String name;
 	private int maxBorrow;
     private List<Book> books;
-    private History history;
-    
-    /*private historyBorrow; // history(livre, date et retard) emprunt livre date et retard (date ou boolean)
-    private historyDate;
-    private historyLate;
-    
-    liste history (history[i].getBook())
-    ou 
-    liste attribut dans history (history.getBook(i))
-    */
-    
+    private History history;    
     
     public User(int id, String name, int maxBorrow, History history, List<Book> books) 
     {        
