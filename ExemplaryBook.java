@@ -60,4 +60,5 @@ public class ExemplaryBook
 		// Compare the deadline with the current date
 		return new Date().after(deadline);
 	}
+
 }
