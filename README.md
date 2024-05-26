@@ -7,6 +7,7 @@
 5. [Lancement](#lancement)
 
 ## Infos général
+Ing 1 GI 1 Groupe 27 Cy-Books
 
 Le projet est une application java fx qui permet de gérer une bibliothèque, avec toutes les fonctionnalités telles que l’inscription des usagers, la gestion des livres, le stock, et les différents emprunts
 <br/> 
