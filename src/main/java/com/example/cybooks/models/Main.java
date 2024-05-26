@@ -4,15 +4,18 @@ import com.example.cybooks.models.Library;
 
 import java.util.List;
 import java.util.Map;
-
+/**
+ * The Main class is the entry point for the CyBooks application.
+ * It performs a book search using the Library class and displays the search results.
+ */
 public class Main {
     public static void main(String[] args) {
         try {
-            // Recherche de livres avec un terme de recherche spécifique
-            String queryString = "bib.title any Jack   "; // Modifiez ce terme selon vos besoins
+            // Search for books with a specific search term
+            String queryString = "bib.title any Jack   "; // Modify this term as needed
             List<Map<String, String>> searchResults = Library.searchBooks(queryString);
 
-            // Affichage des résultats de la recherche
+            // Display the search results
             System.out.println("Résultats de la recherche pour : " + queryString);
             for (Map<String, String> bookInfo : searchResults) {
                 System.out.println("Titre : " + bookInfo.get("Title"));
