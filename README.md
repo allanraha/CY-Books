@@ -32,9 +32,8 @@ https://github.com/allanraha/CY-Books
 Il faut d'abord créer la base de données: 
 <ul>
 <li> Ouvrir mysql-workbench</li>
-<li> Créer une connexion avec un serveur root avec cytech0001 pour mot de passe</li>
-<li> Executer le script sql: <code>projet-main/sql/bookln.sql</code></li>
-<li> Executer le script sql: <code>projet-main/sql/booklndata.sql</code></li>
+<li> Créer une connexion avec un username root, avec cytech0001 pour mot de passe et cy-books pour connexion name </li>
+<li>Créer 3 table, une user ( avec userId type int en primarykey, first_name type text, last_name type texte et email type text), une books ( avec title type text, isbn type text, publisher type texte et author type text) et une loan ( avec idLoan type int primarykey, userId type int en foreignkey, title type texte et author type text, editor type text, loanDate type date, returnDate type date) </li>
 
 </ul>
 
