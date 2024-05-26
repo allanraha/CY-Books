@@ -27,7 +27,6 @@
                     <contextMenu>
                         <ContextMenu>
                             <items>
-                                <MenuItem fx:id="refreshMenuItem" mnemonicParsing="false" text="Actualiser" />
                                 <MenuItem fx:id="editMenuItem" mnemonicParsing="false" text="Modifier" onAction="#handleEditAction"/>
                                 <MenuItem fx:id="deleteMenuItem" mnemonicParsing="false" text="Supprimer" onAction="#handleDeleteAction"/>
                             </items>
