@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  * MainController handles the user interactions from the main view of the CyBooks application.
  * It contains methods to load different views based on the user's actions.
  */
-public class MainController {
+public class mainController {
 
     /**
      * Opens the "Add Member" window when the corresponding action is triggered.
