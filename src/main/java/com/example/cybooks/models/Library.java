@@ -1,131 +1,257 @@
 package com.example.cybooks.models;
 
-import java.io.*;
-import java.util.*;
-import java.net.*;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import org.xml.sax.InputSource;
-import javax.xml.parsers.*;
-import org.w3c.dom.Element;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
+import java.sql.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * The Library class provides methods to search for books in the BnF (Bibliothèque nationale de France) catalog
- * and parse the XML response to extract book information.
+ * The Loan class represents a book loan in the CyBooks application.
+ * It contains details about the loan such as the loan ID, user ID, book title, author, editor, loan date, and return date.
  */
-public class Library {
+public class Loan {
+    private int idloan;
+    private int userId;
+    private String title;
+    private String author;
+    private String editor;
+    private LocalDate loanDate;
+    private LocalDate returnDate;
+
+    // Maximum number of books a user can borrow
+    private static final int MAX_LOANS_PER_USER = 5;
+    // Loan duration in months
+    private static final int LOAN_DURATION_MONTHS = 2;
 
     /**
-     * Searches for books in the BnF catalog using the given query string.
+     * Constructs a new Loan with the specified details including loan ID.
      *
-     * @param queryString the query string for searching books
-     * @return a list of maps containing book information
-     * @throws IOException if an I/O error occurs
-     * @throws InterruptedException if the operation is interrupted
-     * @throws ParserConfigurationException if a parser configuration error occurs
-     * @throws SAXException if a SAX error occurs during parsing
+     * @param idloan the ID of the loan
+     * @param userId the ID of the user
+     * @param title the title of the book
+     * @param author the author of the book
+     * @param editor the editor of the book
+     * @param loanDate the date when the loan was made
+     * @param returnDate the date when the loan should be returned
      */
-    public static List<Map<String, String>> searchBooks(String queryString)
-            throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        // Construct the search URL
-        String apiUrl = "http://catalogue.bnf.fr/api/SRU";
-        String urlString = apiUrl + "?version=1.2&operation=searchRetrieve&query=" + URLEncoder.encode(queryString, "UTF-8") + "&recordSchema=dublincore";
-
-        // Create an HTTP client
-        HttpClient client = HttpClient.newHttpClient();
-
-        // Create an HTTP request
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(urlString))
-                .build();
-
-        // Send the request and get the response
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-        // Parse the XML response
-        return parseXMLResponse(response.body());
+    public Loan(int idloan, int userId, String title, String author, String editor, LocalDate loanDate, LocalDate returnDate) {
+        this.idloan = idloan;
+        this.userId = userId;
+        this.title = title;
+        this.author = author;
+        this.editor = editor;
+        this.loanDate = loanDate;
+        this.returnDate = returnDate;
     }
 
     /**
-     * Parses the XML response to extract book information.
+     * Constructs a new Loan with the specified details without loan ID.
+     * The loan date is set to the current date and the return date is calculated based on the loan duration.
      *
-     * @param xmlString the XML response as a string
-     * @return a list of maps containing book information
+     * @param userId the ID of the user
+     * @param title the title of the book
+     * @param author the author of the book
+     * @param editor the editor of the book
      */
-    public static List<Map<String, String>> parseXMLResponse(String xmlString) {
-        List<Map<String, String>> booksInfo = new ArrayList<>();
+    public Loan(int userId, String title, String author, String editor) {
+        this.userId = userId;
+        this.title = title;
+        this.author = author;
+        this.editor = editor;
+        this.loanDate = LocalDate.now();
+        this.returnDate = loanDate.plusMonths(LOAN_DURATION_MONTHS);
+    }
 
-        try {
-            // Convert the XML string to an InputStream using UTF-8 encoding
-            InputStream is = new ByteArrayInputStream(xmlString.getBytes("UTF-8"));
+    // Getters and Setters
+    public int getIdloan() {
+        return idloan;
+    }
 
-            // Create a DocumentBuilderFactory
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    public void setIdloan(int idloan) {
+        this.idloan = idloan;
+    }
 
-            // Create a DocumentBuilder
-            DocumentBuilder builder = factory.newDocumentBuilder();
+    public int getUserId() {
+        return userId;
+    }
 
-            // Parse the InputStream and build the Document object
-            Document document = builder.parse(new InputSource(is));
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
 
-            // Normalize the XML structure
-            document.getDocumentElement().normalize();
+    public String getTitle() {
+        return title;
+    }
 
-            // Get all records
-            NodeList records = document.getElementsByTagName("srw:record");
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-            // Get every book from the XML
-            for (int i = 0; i < records.getLength(); i++) {
-                Map<String, String> bookInfo = new HashMap<>();
-                Node record = records.item(i);
+    public String getAuthor() {
+        return author;
+    }
 
-                // Get all elements with the tag "dc:creator"
-                NodeList creators = ((Element) record).getElementsByTagName("dc:creator");
-                for (int j = 0; j < creators.getLength(); j++) {
-                    bookInfo.put("Author" + (j > 0 ? (" " + (j + 1)) : ""), creators.item(j).getTextContent());
-                }
+    public void setAuthor(String author) {
+        this.author = author;
+    }
 
-                // Get all elements with the tag "dc:title"
-                NodeList titles = ((Element) record).getElementsByTagName("dc:title");
-                if (titles.item(0) != null)
-                    bookInfo.put("Title", titles.item(0).getTextContent());
+    public String getEditor() {
+        return editor;
+    }
 
-                // Get all elements with the tag "dc:type"
-                NodeList types = ((Element) record).getElementsByTagName("dc:type");
-                if (types.item(0) != null)
-                    bookInfo.put("Document Type", types.item(0).getTextContent());
+    public void setEditor(String editor) {
+        this.editor = editor;
+    }
 
-                // Get all elements with the tag "dc:contributor"
-                NodeList contributors = ((Element) record).getElementsByTagName("dc:contributor");
-                for (int j = 0; j < contributors.getLength(); j++) {
-                    bookInfo.put("Contributor" + (j > 0 ? (" " + (j + 1)) : ""), contributors.item(j).getTextContent());
-                }
+    public LocalDate getLoanDate() {
+        return loanDate;
+    }
 
-                // Get other information about the publishers
-                NodeList publishers = ((Element) record).getElementsByTagName("dc:publisher");
-                StringBuilder publiString = new StringBuilder();
-                for (int j = 0; j < publishers.getLength(); j++) {
-                    publiString.append(publishers.item(j).getTextContent()).append("  ");
-                }
-                bookInfo.put("Publisher", publiString.toString().trim());
+    public void setLoanDate(LocalDate loanDate) {
+        this.loanDate = loanDate;
+    }
 
-                // Get the date
-                NodeList dates = ((Element) record).getElementsByTagName("dc:date");
-                if (dates.item(0) != null)
-                    bookInfo.put("Date", dates.item(0).getTextContent());
+    public LocalDate getReturnDate() {
+        return returnDate;
+    }
 
-                // Add the book information to the list
-                booksInfo.add(bookInfo);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    public void setReturnDate(LocalDate returnDate) {
+        this.returnDate = returnDate;
+    }
+
+    /**
+     * Deletes this loan from the database.
+     *
+     * @param conn the database connection
+     * @throws SQLException if a database access error occurs
+     */
+    public void deleteLoan(Connection conn) throws SQLException {
+        String deleteLoanQuery = "DELETE FROM loan WHERE idloan = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(deleteLoanQuery)) {
+            stmt.setInt(1, this.idloan);
+            stmt.executeUpdate();
+        }
+    }
+
+    /**
+     * Adds a new loan to the database.
+     *
+     * @param conn the database connection
+     * @param newLoan the new loan to be added
+     * @return true if the loan was added successfully, false otherwise
+     * @throws Exception if the maximum number of loans per user is exceeded
+     */
+    public static boolean addLoan(Connection conn, Loan newLoan) throws Exception {
+        // Check the maximum number of loans per user
+        int userLoanCount = getUserLoanCount(conn, newLoan.getUserId());
+        if (userLoanCount >= MAX_LOANS_PER_USER) {
+            throw new Exception("The maximum number of loans per user has been reached.");
         }
 
-        return booksInfo;
+        // Add the loan to the database
+        String insertLoanQuery = "INSERT INTO loan (userId, title, author, editor, loanDate, returnDate) VALUES (?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement stmt = conn.prepareStatement(insertLoanQuery)) {
+            stmt.setInt(1, newLoan.getUserId());
+            stmt.setString(2, newLoan.getTitle());
+            stmt.setString(3, newLoan.getAuthor());
+            stmt.setString(4, newLoan.getEditor());
+            stmt.setDate(5, Date.valueOf(newLoan.getLoanDate()));
+            stmt.setDate(6, Date.valueOf(newLoan.getReturnDate()));
+            stmt.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Gets the current number of loans for a user.
+     *
+     * @param conn the database connection
+     * @param userId the ID of the user
+     * @return the number of loans for the user
+     * @throws SQLException if a database access error occurs
+     */
+    private static int getUserLoanCount(Connection conn, int userId) throws SQLException {
+        String countQuery = "SELECT COUNT(*) FROM loan WHERE userId = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(countQuery)) {
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Gets the top 5 most borrowed books in the last 30 days.
+     *
+     * @param conn the database connection
+     * @return a list of LoanStats objects representing the top borrowed books
+     * @throws SQLException if a database access error occurs
+     */
+    public static List<LoanStats> getTopLoansInLast30Days(Connection conn) throws SQLException {
+        String query = "SELECT title, author, editor, COUNT(*) as loanCount " +
+                "FROM loan " +
+                "WHERE loanDate >= NOW() - INTERVAL '30' DAY " +
+                "GROUP BY title, author, editor " +
+                "ORDER BY loanCount DESC " +
+                "LIMIT 5";
+        List<LoanStats> topLoans = new ArrayList<>();
+        try (PreparedStatement stmt = conn.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                String title = rs.getString("title");
+                String author = rs.getString("author");
+                String editor = rs.getString("editor");
+                int loanCount = rs.getInt("loanCount");
+                topLoans.add(new LoanStats(title, author, editor, loanCount));
+            }
+        }
+        return topLoans;
+    }
+
+    /**
+     * Updates the return date for this loan in the database.
+     *
+     * @param conn the database connection
+     * @throws SQLException if a database access error occurs
+     */
+    public void updateReturnDate(Connection conn) throws SQLException {
+        String updateQuery = "UPDATE loan SET returnDate = ? WHERE idloan = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
+            stmt.setDate(1, Date.valueOf(this.returnDate));
+            stmt.setInt(2, this.idloan);
+            stmt.executeUpdate();
+        }
+    }
+
+    /**
+     * Gets a list of loans that are delayed.
+     *
+     * @param conn the database connection
+     * @return a list of delayed loans
+     * @throws SQLException if a database access error occurs
+     */
+    public static List<Loan> getDelayedLoans(Connection conn) throws SQLException {
+        String query = "SELECT * FROM loan WHERE returnDate < ?";
+        List<Loan> delayedLoans = new ArrayList<>();
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setDate(1, Date.valueOf(LocalDate.now()));
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                int idloan = rs.getInt("idloan");
+                int userId = rs.getInt("userId");
+                String title = rs.getString("title");
+                String author = rs.getString("author");
+                String editor = rs.getString("editor");
+                LocalDate loanDate = rs.getDate("loanDate").toLocalDate();
+                LocalDate returnDate = rs.getDate("returnDate").toLocalDate();
+                delayedLoans.add(new Loan(idloan, userId, title, author, editor, loanDate, returnDate));
+            }
+        }
+        return delayedLoans;
     }
 }
