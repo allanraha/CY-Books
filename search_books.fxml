@@ -15,19 +15,22 @@
          <children>
             <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="403.0" prefWidth="604.0">
                <children>
-                  <TextField id="titlefield" fx:id="titlefield" prefHeight="37.0" prefWidth="498.0" promptText="Mot clé d'un titre ( 1 seul )">
+                  <TextField fx:id="titlefield" promptText="Titre">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
                      <VBox.margin>
-                        <Insets left="50.0" right="50.0" top="70.0" />
+                        <Insets left="50.0" right="50.0" top="50.0" />
                      </VBox.margin>
                   </TextField>
-                  <TextField id="authorfield" fx:id="authorfield" prefHeight="37.0" prefWidth="498.0" promptText="Mot clé d'un auteur ( 1 seul )">
+                  <TextField fx:id="publisherfield" promptText="Editeur">
                      <VBox.margin>
-                        <Insets left="50.0" right="50.0" top="30.0" />
+                        <Insets left="50.0" right="50.0" top="20.0" />
                      </VBox.margin>
                   </TextField>
-                  <TextField id="publisherfield" fx:id="publisherfield" prefHeight="37.0" prefWidth="498.0" promptText="Mot clé d'un éditeur ( 1 seul )">
+                  <TextField fx:id="authorfield" prefHeight="37.0" prefWidth="498.0" promptText="Auteur">
                      <VBox.margin>
-                        <Insets left="50.0" right="50.0" top="30.0" />
+                        <Insets left="50.0" right="50.0" top="20.0" />
                      </VBox.margin>
                   </TextField>
                   <HBox prefHeight="89.0" prefWidth="604.0">
