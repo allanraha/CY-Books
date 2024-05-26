@@ -2,20 +2,20 @@ package com.example.cybooks.models;
 
 import com.example.cybooks.services.Databaseconnexion;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a user in the CyBooks application.
+ */
 public class User {
     private int userID;
     private String first_name;
     private String last_name;
     private String email;
 
-    // Constructeur
+    // Constructor
     public User(int userID, String first_name, String last_name, String email) {
         this.userID = userID;
         this.first_name = first_name;
@@ -23,7 +23,7 @@ public class User {
         this.email = email;
     }
 
-    // Getters et setters
+    // Getters and setters
     public int getUserID() {
         return userID;
     }
@@ -56,7 +56,11 @@ public class User {
         this.email = email;
     }
 
-    // Méthode pour ajouter un utilisateur
+    /**
+     * Adds a new user to the database.
+     * 
+     * @throws SQLException if a database access error occurs.
+     */
     public void addUser() throws SQLException {
         String query = "INSERT INTO users (first_name, last_name, email) VALUES (?, ?, ?)";
         try (Connection conn = Databaseconnexion.getConnection();
@@ -66,42 +70,44 @@ public class User {
             stmt.setString(3, this.email);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            if (e.getErrorCode() == 1062) { // Code d'erreur pour duplication de meme mail
-                throw new SQLException("Cet email est déjà enregistré.");
-            } else if (e.getMessage().contains("NOT NULL constraint failed")) {//Champs remplis null
-                throw new SQLException("Les champs ne doivent pas être nuls.");
+            if (e.getErrorCode() == 1062) { // Duplicate email error code
+                throw new SQLException("This email is already registered.");
+            } else if (e.getMessage().contains("NOT NULL constraint failed")) { // Null field error
+                throw new SQLException("Fields cannot be null.");
             } else {
-                throw new SQLException("Erreur de la base de données : " + e.getMessage());
+                throw new SQLException("Database error: " + e.getMessage());
             }
         }
     }
 
-
-
-    // Méthode pour supprimer un utilisateur
+    /**
+     * Deletes a user and their associated loans from the database.
+     * 
+     * @param id the ID of the user to delete.
+     * @throws SQLException if a database access error occurs.
+     */
     public void deleteUser(int id) throws SQLException {
         String deleteLoansQuery = "DELETE FROM loan WHERE userId = ?";
         String deleteUserQuery = "DELETE FROM users WHERE userId = ?";
 
         try (Connection conn = Databaseconnexion.getConnection()) {
-            // Commencer une transaction
             conn.setAutoCommit(false);
 
             try (PreparedStatement deleteLoansStmt = conn.prepareStatement(deleteLoansQuery);
                  PreparedStatement deleteUserStmt = conn.prepareStatement(deleteUserQuery)) {
 
-                // Supprimer les prêts associés
+                // Delete associated loans
                 deleteLoansStmt.setInt(1, id);
                 deleteLoansStmt.executeUpdate();
 
-                // Supprimer l'utilisateur
+                // Delete the user
                 deleteUserStmt.setInt(1, id);
                 deleteUserStmt.executeUpdate();
 
-                // Valide
+                // Commit transaction
                 conn.commit();
             } catch (SQLException e) {
-                // Annule en cas d'erreur
+                // Rollback in case of error
                 conn.rollback();
                 throw e;
             } finally {
@@ -110,7 +116,11 @@ public class User {
         }
     }
 
-    // Méthode pour mettre à jour un utilisateur
+    /**
+     * Updates the user information in the database.
+     * 
+     * @param id the ID of the user to update.
+     */
     public void updateUser(int id) {
         String query = "UPDATE users SET first_name = ?, last_name = ?, email = ? WHERE userID = ?";
         try (Connection conn = Databaseconnexion.getConnection();
@@ -121,17 +131,20 @@ public class User {
             stmt.setInt(4, id);
             stmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("Erreur lors de la mise à jour de l'utilisateur : " + e.getMessage());
+            System.out.println("Error updating user: " + e.getMessage());
             e.printStackTrace();
         }
     }
-    // Méthode pour afficher tous les utilisateurs
+
+    /**
+     * Displays all users from the database.
+     */
     public static void displayAllUsers() {
         String query = "SELECT * FROM users";
         try (Connection conn = Databaseconnexion.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query);
-             ResultSet rs = stmt.executeQuery()) {//excute et recupere le resultat sous forme de resultat set
-             while (rs.next()) { //Parcour chq ligne du rs
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
                 int id = rs.getInt("userID");
                 String firstName = rs.getString("first_name");
                 String lastName = rs.getString("last_name");
@@ -139,11 +152,17 @@ public class User {
                 System.out.println("UserID: " + id + ", First Name: " + firstName + ", Last Name: " + lastName + ", Email: " + email);
             }
         } catch (SQLException e) {
-            System.out.println("Erreur lors de l'affichage des utilisateurs : " + e.getMessage());
+            System.out.println("Error displaying users: " + e.getMessage());
             e.printStackTrace();
         }
     }
-    // Méthode pour rechercher des utilisateurs par différents critères
+
+    /**
+     * Searches for users based on a search term.
+     * 
+     * @param searchTerm the term to search for.
+     * @return a list of users matching the search term.
+     */
     public static List<User> findUser(String searchTerm) {
         List<User> users = new ArrayList<>();
         String query = "SELECT * FROM users WHERE first_name LIKE ? OR last_name LIKE ? OR email LIKE ? OR CAST(userID AS CHAR) LIKE ?";
@@ -168,5 +187,4 @@ public class User {
         }
         return users;
     }
-
 }
