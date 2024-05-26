@@ -8,14 +8,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * Represents a user in the CyBooks application.
+ */
 public class User {
     private int userID;
     private String first_name;
     private String last_name;
     private String email;
 
-    // Constructeur
+    // Constructor
     public User(int userID, String first_name, String last_name, String email) {
         this.userID = userID;
         this.first_name = first_name;
@@ -56,7 +58,11 @@ public class User {
         this.email = email;
     }
 
-    // Méthode pour ajouter un utilisateur
+    /**
+     * Adds a new user to the database.
+     * 
+     * @throws SQLException if a database access error occurs.
+     */
     public void addUser() throws SQLException {
         String query = "INSERT INTO users (first_name, last_name, email) VALUES (?, ?, ?)";
         try (Connection conn = Databaseconnexion.getConnection();
@@ -78,7 +84,12 @@ public class User {
 
 
 
-    // Méthode pour supprimer un utilisateur
+    /**
+     * Deletes a user and their associated loans from the database.
+     * 
+     * @param id the ID of the user to delete.
+     * @throws SQLException if a database access error occurs.
+     */
     public void deleteUser(int id) throws SQLException {
         String deleteLoansQuery = "DELETE FROM loan WHERE userId = ?";
         String deleteUserQuery = "DELETE FROM users WHERE userId = ?";
@@ -90,18 +101,18 @@ public class User {
             try (PreparedStatement deleteLoansStmt = conn.prepareStatement(deleteLoansQuery);
                  PreparedStatement deleteUserStmt = conn.prepareStatement(deleteUserQuery)) {
 
-                // Supprimer les prêts associés
+                // Delete associated loans
                 deleteLoansStmt.setInt(1, id);
                 deleteLoansStmt.executeUpdate();
 
-                // Supprimer l'utilisateur
+                // Delete the user
                 deleteUserStmt.setInt(1, id);
                 deleteUserStmt.executeUpdate();
 
-                // Valide
+                // Commit transaction
                 conn.commit();
             } catch (SQLException e) {
-                // Annule en cas d'erreur
+                // Rollback in case of error
                 conn.rollback();
                 throw e;
             } finally {
@@ -110,7 +121,11 @@ public class User {
         }
     }
 
-    // Méthode pour mettre à jour un utilisateur
+    /**
+     * Updates the user information in the database.
+     * 
+     * @param id the ID of the user to update.
+     */
     public void updateUser(int id) {
         String query = "UPDATE users SET first_name = ?, last_name = ?, email = ? WHERE userID = ?";
         try (Connection conn = Databaseconnexion.getConnection();
@@ -125,7 +140,9 @@ public class User {
             e.printStackTrace();
         }
     }
-    // Méthode pour afficher tous les utilisateurs
+    /**
+     * Displays all users from the database.
+     */
     public static void displayAllUsers() {
         String query = "SELECT * FROM users";
         try (Connection conn = Databaseconnexion.getConnection();
@@ -143,7 +160,12 @@ public class User {
             e.printStackTrace();
         }
     }
-    // Méthode pour rechercher des utilisateurs par différents critères
+    /**
+     * Searches for users based on a search term.
+     * 
+     * @param searchTerm the term to search for.
+     * @return a list of users matching the search term.
+     */
     public static List<User> findUser(String searchTerm) {
         List<User> users = new ArrayList<>();
         String query = "SELECT * FROM users WHERE first_name LIKE ? OR last_name LIKE ? OR email LIKE ? OR CAST(userID AS CHAR) LIKE ?";
