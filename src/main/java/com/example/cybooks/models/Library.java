@@ -14,8 +14,22 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+/**
+ * The Library class provides methods to search for books in the BnF (Bibliothèque nationale de France) catalog
+ * and parse the XML response to extract book information.
+ */
 public class Library {
 
+    /**
+     * Searches for books in the BnF catalog using the given query string.
+     *
+     * @param queryString the query string for searching books
+     * @return a list of maps containing book information
+     * @throws IOException if an I/O error occurs
+     * @throws InterruptedException if the operation is interrupted
+     * @throws ParserConfigurationException if a parser configuration error occurs
+     * @throws SAXException if a SAX error occurs during parsing
+     */
     public static List<Map<String, String>> searchBooks(String queryString)
             throws IOException, InterruptedException, ParserConfigurationException, SAXException {
         // Construire l'URL de recherche
@@ -36,7 +50,12 @@ public class Library {
         // Parse the XML response
         return parseXMLResponse(response.body());
     }
-
+    /**
+     * Parses the XML response to extract book information.
+     *
+     * @param xmlString the XML response as a string
+     * @return a list of maps containing book information
+     */
     public static List<Map<String, String>> parseXMLResponse(String xmlString) {
         List<Map<String, String>> booksInfo = new ArrayList<>();
 
