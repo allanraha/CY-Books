@@ -14,18 +14,32 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+/**
+ * The Library class provides methods to search for books in the BnF (Bibliothèque nationale de France) catalog
+ * and parse the XML response to extract book information.
+ */
 public class Library {
 
+    /**
+     * Searches for books in the BnF catalog using the given query string.
+     *
+     * @param queryString the query string for searching books
+     * @return a list of maps containing book information
+     * @throws IOException if an I/O error occurs
+     * @throws InterruptedException if the operation is interrupted
+     * @throws ParserConfigurationException if a parser configuration error occurs
+     * @throws SAXException if a SAX error occurs during parsing
+     */
     public static List<Map<String, String>> searchBooks(String queryString)
             throws IOException, InterruptedException, ParserConfigurationException, SAXException {
-        // Construire l'URL de recherche
+        // Construct the search URL
         String apiUrl = "http://catalogue.bnf.fr/api/SRU";
         String urlString = apiUrl + "?version=1.2&operation=searchRetrieve&query=" + URLEncoder.encode(queryString, "UTF-8") + "&recordSchema=dublincore";
 
-        // Create a HTTP client
+        // Create an HTTP client
         HttpClient client = HttpClient.newHttpClient();
 
-        // Create a HTTP request
+        // Create an HTTP request
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(urlString))
                 .build();
@@ -37,6 +51,12 @@ public class Library {
         return parseXMLResponse(response.body());
     }
 
+    /**
+     * Parses the XML response to extract book information.
+     *
+     * @param xmlString the XML response as a string
+     * @return a list of maps containing book information
+     */
     public static List<Map<String, String>> parseXMLResponse(String xmlString) {
         List<Map<String, String>> booksInfo = new ArrayList<>();
 
@@ -53,12 +73,13 @@ public class Library {
             // Parse the InputStream and build the Document object
             Document document = builder.parse(new InputSource(is));
 
-            // Normalize the XML Structure
+            // Normalize the XML structure
             document.getDocumentElement().normalize();
 
             // Get all records
             NodeList records = document.getElementsByTagName("srw:record");
 
+            // Get every book from the XML
             for (int i = 0; i < records.getLength(); i++) {
                 Map<String, String> bookInfo = new HashMap<>();
                 Node record = records.item(i);
