@@ -5,10 +5,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * The Loan class represents a book loan in the CyBooks application.
- * It contains details about the loan such as the loan ID, user ID, book title, author, editor, loan date, and return date.
- */
 public class Loan {
     private int idloan;
     private int userId;
@@ -18,22 +14,12 @@ public class Loan {
     private LocalDate loanDate;
     private LocalDate returnDate;
 
-    // Maximum number of books a user can borrow
+    // Limite de livres empruntés par utilisateur
     private static final int MAX_LOANS_PER_USER = 5;
-    // Loan duration in months
+    // Durée du prêt en mois
     private static final int LOAN_DURATION_MONTHS = 2;
 
-    /**
-     * Constructs a new Loan with the specified details including loan ID.
-     *
-     * @param idloan the ID of the loan
-     * @param userId the ID of the user
-     * @param title the title of the book
-     * @param author the author of the book
-     * @param editor the editor of the book
-     * @param loanDate the date when the loan was made
-     * @param returnDate the date when the loan should be returned
-     */
+    // Constructeur avec id
     public Loan(int idloan, int userId, String title, String author, String editor, LocalDate loanDate, LocalDate returnDate) {
         this.idloan = idloan;
         this.userId = userId;
@@ -44,15 +30,7 @@ public class Loan {
         this.returnDate = returnDate;
     }
 
-    /**
-     * Constructs a new Loan with the specified details without loan ID.
-     * The loan date is set to the current date and the return date is calculated based on the loan duration.
-     *
-     * @param userId the ID of the user
-     * @param title the title of the book
-     * @param author the author of the book
-     * @param editor the editor of the book
-     */
+    // Constructeur sans id
     public Loan(int userId, String title, String author, String editor) {
         this.userId = userId;
         this.title = title;
@@ -62,7 +40,7 @@ public class Loan {
         this.returnDate = loanDate.plusMonths(LOAN_DURATION_MONTHS);
     }
 
-    // Getters and Setters
+    // Getters et Setters
     public int getIdloan() {
         return idloan;
     }
@@ -119,12 +97,7 @@ public class Loan {
         this.returnDate = returnDate;
     }
 
-    /**
-     * Deletes this loan from the database.
-     *
-     * @param conn the database connection
-     * @throws SQLException if a database access error occurs
-     */
+    // Suppression d'un prêt
     public void deleteLoan(Connection conn) throws SQLException {
         String deleteLoanQuery = "DELETE FROM loan WHERE idloan = ?";
         try (PreparedStatement stmt = conn.prepareStatement(deleteLoanQuery)) {
@@ -133,22 +106,15 @@ public class Loan {
         }
     }
 
-    /**
-     * Adds a new loan to the database.
-     *
-     * @param conn the database connection
-     * @param newLoan the new loan to be added
-     * @return true if the loan was added successfully, false otherwise
-     * @throws Exception if the maximum number of loans per user is exceeded
-     */
+    // Méthode pour ajouter un prêt
     public static boolean addLoan(Connection conn, Loan newLoan) throws Exception {
-        // Check the maximum number of loans per user
+        // Vérifier le nombre maximum de prêts par utilisateur
         int userLoanCount = getUserLoanCount(conn, newLoan.getUserId());
         if (userLoanCount >= MAX_LOANS_PER_USER) {
-            throw new Exception("The maximum number of loans per user has been reached.");
+            throw new Exception("Le nombre maximum de prêts par utilisateur est atteint.");
         }
 
-        // Add the loan to the database
+        // Ajouter l'emprunt dans la base de données
         String insertLoanQuery = "INSERT INTO loan (userId, title, author, editor, loanDate, returnDate) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(insertLoanQuery)) {
             stmt.setInt(1, newLoan.getUserId());
@@ -165,14 +131,7 @@ public class Loan {
         }
     }
 
-    /**
-     * Gets the current number of loans for a user.
-     *
-     * @param conn the database connection
-     * @param userId the ID of the user
-     * @return the number of loans for the user
-     * @throws SQLException if a database access error occurs
-     */
+    // Méthode pour obtenir le nombre de prêts actuels d'un utilisateur
     private static int getUserLoanCount(Connection conn, int userId) throws SQLException {
         String countQuery = "SELECT COUNT(*) FROM loan WHERE userId = ?";
         try (PreparedStatement stmt = conn.prepareStatement(countQuery)) {
@@ -182,16 +141,11 @@ public class Loan {
                 return rs.getInt(1);
             }
         }
+
         return 0;
     }
 
-    /**
-     * Gets the top 5 most borrowed books in the last 30 days.
-     *
-     * @param conn the database connection
-     * @return a list of LoanStats objects representing the top borrowed books
-     * @throws SQLException if a database access error occurs
-     */
+    // Méthode pour obtenir les livres les plus empruntés au cours des 30 derniers jours
     public static List<LoanStats> getTopLoansInLast30Days(Connection conn) throws SQLException {
         String query = "SELECT title, author, editor, COUNT(*) as loanCount " +
                 "FROM loan " +
@@ -212,13 +166,6 @@ public class Loan {
         }
         return topLoans;
     }
-
-    /**
-     * Updates the return date for this loan in the database.
-     *
-     * @param conn the database connection
-     * @throws SQLException if a database access error occurs
-     */
     public void updateReturnDate(Connection conn) throws SQLException {
         String updateQuery = "UPDATE loan SET returnDate = ? WHERE idloan = ?";
         try (PreparedStatement stmt = conn.prepareStatement(updateQuery)) {
@@ -227,14 +174,6 @@ public class Loan {
             stmt.executeUpdate();
         }
     }
-
-    /**
-     * Gets a list of loans that are delayed.
-     *
-     * @param conn the database connection
-     * @return a list of delayed loans
-     * @throws SQLException if a database access error occurs
-     */
     public static List<Loan> getDelayedLoans(Connection conn) throws SQLException {
         String query = "SELECT * FROM loan WHERE returnDate < ?";
         List<Loan> delayedLoans = new ArrayList<>();
@@ -253,5 +192,6 @@ public class Loan {
             }
         }
         return delayedLoans;
-    }
-}
+
+
+}}
