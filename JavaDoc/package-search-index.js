@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"m":"com.example.cybooks","l":"com.example.cybooks"},{"m":"com.example.cybooks","l":"com.example.cybooks.controllers"},{"m":"com.example.cybooks","l":"com.example.cybooks.models"},{"m":"com.example.cybooks","l":"com.example.cybooks.services"}];updateSearchResults();
