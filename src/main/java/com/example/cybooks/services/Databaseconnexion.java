@@ -8,7 +8,7 @@ import java.sql.SQLException;
  * DatabaseConnection handles the database connection for the CyBooks application.
  * It provides a method to establish a connection to the MySQL database.
  */
-public class DatabaseConnection {
+public class DatabaseConnexion {
 
     // Database URL, username, and password
     private static final String URL = "jdbc:mysql://127.0.0.1:3306/cybooksbdd";
