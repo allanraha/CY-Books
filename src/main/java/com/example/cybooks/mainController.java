@@ -95,7 +95,7 @@ public class mainController {
             stage.show();
         } catch (IOException ex) {
             // Log any IO exceptions that occur
-            Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(mainController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
