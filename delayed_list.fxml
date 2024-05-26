@@ -10,16 +10,16 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.StackPane?>
 
-<StackPane fx:id="rootPane" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="library.assistant.ui.listbook.BookListController">
+<StackPane fx:id="rootPane" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.cybooks.controllers.delayed_listController" >
    <children>
       <AnchorPane id="AnchorPane" fx:id="contentPane" prefHeight="525.0" prefWidth="798.0" stylesheets="@style.css">
          <children>
             <TableView fx:id="tableView" layoutX="14.0" layoutY="35.2" prefHeight="491.0" prefWidth="798.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0">
               <columns>
-                <TableColumn fx:id="titleCol" prefWidth="171.99993586540222" text="Nom Utilisateur" />
-                  <TableColumn fx:id="idCol1" maxWidth="2500.0" prefWidth="48.800018310546875" text="ID Livre" />
-                  <TableColumn fx:id="authorCol" prefWidth="158.4000244140625" text="Titre Livre" />
-                  <TableColumn fx:id="publisherCol" prefWidth="159.199951171875" text="Date de rendu attendu" />
+                <TableColumn fx:id="idCol" prefWidth="171.99993586540222" text="Id Pret" />
+                  <TableColumn fx:id="userIdCol" maxWidth="2500.0" prefWidth="48.800018310546875" text="ID Utilisateur" />
+                  <TableColumn fx:id="titleCol" prefWidth="158.4000244140625" text="Titre Livre" />
+                  <TableColumn fx:id="returnDateCol" prefWidth="159.199951171875" text="Date de rendu attendu" />
               </columns>
                <columnResizePolicy>
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -27,9 +27,9 @@
                <contextMenu>
                   <ContextMenu>
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#handleRefresh" text="Refresh" />
-                      <MenuItem mnemonicParsing="false" onAction="#handleBookEditOption" text="Edit" />
-                        <MenuItem mnemonicParsing="false" onAction="#handleBookDeleteOption" text="Delete" />
+                        <MenuItem mnemonicParsing="false"  text="Refresh" />
+                      <MenuItem mnemonicParsing="false"  text="Edit" />
+                        <MenuItem mnemonicParsing="false"  text="Delete" />
                     </items>
                      <styleClass>
                         <String fx:value="table-context" />
@@ -42,7 +42,7 @@
                <menus>
                   <Menu mnemonicParsing="false" text="CY-Books">
                      <items>
-                        <MenuItem mnemonicParsing="false" onAction="#closeStage" text="Ing 1 GI 1 27" />
+                        <MenuItem mnemonicParsing="false" text="Ing 1 GI 1 27" />
                      </items>
                   </Menu>
                </menus>
